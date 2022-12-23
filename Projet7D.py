@@ -21,6 +21,8 @@ import pickle
 import shap
 import json
 import requests
+import streamlit.components.v1 as components
+
 
 rows = 250
 
@@ -88,53 +90,78 @@ if check_compare:
 #CREATION TABLEAU SITUATION COMPARATIVE QUALI
 
     if check_compare_quali:
+        select_display = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
         select_variable = st.selectbox('Variable Qualitative', ('Logement Actuel', 'Statut Familial', 'Niveau d\'éducation', 'Sexe',
                                     'Situation Prof.','Type emprunt sollicité'))
-        fig = plt.figure(figsize=(8, 4))
-    #valeur de la variable sélectionnée pour le client concerné
+        
+        #valeur de la variable sélectionnée pour le client concerné
         spec_quali =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
-    #liste des valeurs uniques de la variable sélectionnée (select_variable)
-        var_list = list(df_base[select_variable].unique())
-        ax = sns.histplot(df_base[select_variable])
-    #couleur spécifique pour la bin dans laquelle le client se trouve
-        for i in range(len(ax.patches)):
-            p= ax.patches[i] #PATCH , rectangle n°i
-            j=var_list[i]
-            if j == spec_quali:
-                p.set_facecolor('#50a28c')
-        legend = patches.Patch(color='#50a28c', label='Client\'s bracket')
-        plt.legend(handles=[legend], title='Valeur client = '+str(spec_quali),loc=1, fontsize='small', fancybox=True)
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
+        
+        # affichage simple : 
+        if select_display == 'Affichage basique':
+            #liste des valeurs uniques de la variable sélectionnée (select_variable)
+            fig = plt.figure(figsize=(8, 4))
+            var_list = list(df_base[select_variable].unique())
+            ax = sns.histplot(df_base[select_variable])
+            #couleur spécifique pour la bin dans laquelle le client se trouve
+            for i in range(len(ax.patches)):
+                p= ax.patches[i] #PATCH , rectangle n°i
+                j=var_list[i]
+                if j == spec_quali:
+                    p.set_facecolor('#50a28c')
+            legend = patches.Patch(color='#50a28c', label='Client\'s bracket')
+            plt.legend(handles=[legend], title='Valeur client = '+str(spec_quali),loc=1, fontsize='small', fancybox=True)
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
+
+        # affichage variable 'TARGET' : 
+        if select_display == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
+            st.write('Valeur client : ' + str(spec_quali))
+            fig = plt.figure(figsize=(8, 4))
+            ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
 
 #CREATION TABLEAU SITUATION COMPARATIVE QUANTITATIVE
     check_compare_quanti = st.checkbox("Comparatives Quantitatives")
     if check_compare_quanti:
+        select_display = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
         select_variable = st.selectbox('Variable Quantitative', ('Age (ans)', 'Nombre Enfant','Ancienneté Prof. (ans)','Montant Emprunt ($)',
                                     'Montant Annuité ($)', 'Salaire Annuel ($)', 'Montant du bien financé ($)', 'Taux endettement (%)'))
         spec_quanti =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
-        var_list = list(df_base[select_variable].unique())
-        var_list.sort()
-        if len(var_list) > 5:
-            var_list = np.linspace(min(var_list), max(var_list), num=25)
-        else : 
-            var_list = var_list  
-        fig = plt.figure(figsize=(8, 4))
-        patch_index = np.digitize([spec_quanti], var_list)[0]-1
-        ax = sns.histplot(df_base[select_variable] ,bins=var_list)
-        plt.axvline(x=df_base[select_variable].median(),color='#a95f6f',ls='--')
-        ax.patches[patch_index].set_color('#50a28c')
-    #légende
-        legend1 = patches.Patch(color='#50a28c', label='Client\'s bracket')
-        legend2 = Line2D([0], [0], color='#a95f6f', label='Median',ls='--')
-        if select_variable in ['Age (ans)','Nombre Enfant','Ancienneté Prof. (ans)']:
-            titre = 'Valeur client = '+str(spec_quanti)
-        elif select_variable == 'Taux endettement (%)':
-            titre = 'Valeur client = '+str(spec_quanti) +' %'
-        else : 
-            titre = 'Valeur client = $'+str(spec_quanti) 
-        plt.legend(handles=[legend1, legend2], title=titre,loc=1, fontsize='small', fancybox=True)
-        st.pyplot(fig)
+
+        # affichage simple :
+        if select_display == 'Affichage basique':
+            var_list = list(df_base[select_variable].unique())
+            var_list.sort()
+            if len(var_list) > 5:
+                var_list = np.linspace(min(var_list), max(var_list), num=25)
+            else : 
+                var_list = var_list  
+            fig = plt.figure(figsize=(8, 4))
+            patch_index = np.digitize([spec_quanti], var_list)[0]-1
+            ax = sns.histplot(df_base[select_variable] ,bins=var_list)
+            plt.axvline(x=df_base[select_variable].median(),color='#a95f6f',ls='--')
+            ax.patches[patch_index].set_color('#50a28c')
+            #légende
+            legend1 = patches.Patch(color='#50a28c', label='Client\'s bracket')
+            legend2 = Line2D([0], [0], color='#a95f6f', label='Median',ls='--')
+            if select_variable in ['Age (ans)','Nombre Enfant','Ancienneté Prof. (ans)']:
+                titre = 'Valeur client = '+str(spec_quanti)
+            elif select_variable == 'Taux endettement (%)':
+                titre = 'Valeur client = '+str(spec_quanti) +' %'
+            else : 
+                titre = 'Valeur client = $'+str(spec_quanti) 
+            plt.legend(handles=[legend1, legend2], title=titre,loc=1, fontsize='small', fancybox=True)
+            st.pyplot(fig)
+
+        # affichage variable 'TARGET' : 
+        if select_display == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
+            st.write('Valeur client : ' + str(spec_quanti))
+            fig = plt.figure(figsize=(8, 4))
+            ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")
+            plt.xticks(rotation=45)
+            st.pyplot(fig)
 
 # SCORE
 check_score = st.sidebar.checkbox("Score Client")
@@ -228,29 +255,17 @@ if check_FI:
         explainer = shap.Explainer(model, X)
         shap_values = explainer(X)
         index = df_final.SK_ID_CURR[df_final.SK_ID_CURR == select_id].index.tolist()
-        
+
         figure(figsize=(8, 6), dpi=80)
         fig2=shap.plots.bar(shap_values[index])
         st.set_option('deprecation.showPyplotGlobalUse', False)
         st.pyplot(fig2)
+        
+        def st_shap(plot, height=None):
+            shap_html = f"<head>{shap.getjs()}</head><body>{plot.html()}</body>"
+            components.html(shap_html, height=height)
 
         shap_v = explainer.shap_values(X)
-        # fig3 = shap.force_plot(explainer.expected_value, shap_v[index,:], X.iloc[index,:])
-        # st.set_option('deprecation.showPyplotGlobalUse', False)
-        # st.pyplot(fig3)
-
-
-
-# faire un scatt
-# API faire un nouveau script (15 lignes)
-# Flask (librairie)
-# https://towardsdatascience.com/how-to-easily-deploy-machine-learning-models-using-flask-b95af8fe34d4
-# d'un coté dashboard, de l'autre API
-# le modèle n'est pas dans le dashboard mais dans l'API
-# externalisation de la partie prédiction dans l'API
-# loading du modèle dans l'API
-#le notebook ne sert plus à partir de là
-# 2e capture, ne pas tenir compte des lignes 8 à 21
-# ligne 26 format json - soit sortir juste le n° du client, soit sortir toute la ligne du json - modifier ligne 27 np.array(())
-# lancer
-
+        i = index[0]
+        # visualize the first prediction's explanation (use matplotlib=True to avoid Javascript)
+        st_shap(shap.force_plot(explainer.expected_value, shap_v[i,:], X.iloc[i,:]))
