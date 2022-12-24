@@ -14,7 +14,7 @@ df= df.drop('TARGET', axis =1)
 def prediction():
     
     data = request.get_json(force=True)
-    prediction = model.predict_proba(df[df['SK_ID_CURR']== data['SK_ID_CURR']])
+    prediction = model.predict_proba(df.loc[df['SK_ID_CURR']== data['SK_ID_CURR']])
     P = np.array(prediction).flatten()
     output = P[0]
     return jsonify(output)
