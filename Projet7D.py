@@ -21,7 +21,7 @@ import pickle
 import shap
 import json
 import requests
-#import streamlit.components.v1 as components
+import streamlit.components.v1 as components
 
 
 rows = 250
@@ -90,7 +90,7 @@ if check_compare:
 #CREATION TABLEAU SITUATION COMPARATIVE QUALI
 
     if check_compare_quali:
-        select_display = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
+        select_display1 = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
         select_variable = st.selectbox('Variable Qualitative', ('Logement Actuel', 'Statut Familial', 'Niveau d\'éducation', 'Sexe',
                                     'Situation Prof.','Type emprunt sollicité'))
         
@@ -98,7 +98,7 @@ if check_compare:
         spec_quali =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
         
         # affichage simple : 
-        if select_display == 'Affichage basique':
+        if select_display1 == 'Affichage basique':
             #liste des valeurs uniques de la variable sélectionnée (select_variable)
             fig = plt.figure(figsize=(8, 4))
             var_list = list(df_base[select_variable].unique())
@@ -115,7 +115,7 @@ if check_compare:
             st.pyplot(fig)
 
         # affichage variable 'TARGET' : 
-        if select_display == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
+        if select_display1 == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
             st.write('Valeur client : ' + str(spec_quali))
             fig = plt.figure(figsize=(8, 4))
             ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")
@@ -125,13 +125,13 @@ if check_compare:
 #CREATION TABLEAU SITUATION COMPARATIVE QUANTITATIVE
     check_compare_quanti = st.checkbox("Comparatives Quantitatives")
     if check_compare_quanti:
-        select_display = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
+        select_display2 = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
         select_variable = st.selectbox('Variable Quantitative', ('Age (ans)', 'Nombre Enfant','Ancienneté Prof. (ans)','Montant Emprunt ($)',
                                     'Montant Annuité ($)', 'Salaire Annuel ($)', 'Montant du bien financé ($)', 'Taux endettement (%)'))
         spec_quanti =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
 
         # affichage simple :
-        if select_display == 'Affichage basique':
+        if select_display2 == 'Affichage basique':
             var_list = list(df_base[select_variable].unique())
             var_list.sort()
             if len(var_list) > 5:
@@ -156,7 +156,7 @@ if check_compare:
             st.pyplot(fig)
 
         # affichage variable 'TARGET' : 
-        if select_display == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
+        if select_display2 == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
             st.write('Valeur client : ' + str(spec_quanti))
             fig = plt.figure(figsize=(8, 4))
             ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")

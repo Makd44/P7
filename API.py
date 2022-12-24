@@ -7,7 +7,7 @@ import shap
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
 
-df = pd.read_csv('df_final.csv', sep=',',nrows=100 )
+df = pd.read_csv('df_final.csv', sep=',',nrows=250 )
 df= df.drop('TARGET', axis =1)
 
 @app.route('/prediction', methods=['POST'])
