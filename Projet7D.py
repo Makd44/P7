@@ -91,18 +91,18 @@ if check_compare:
 
     if check_compare_quali:
         select_display1 = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
-        select_variable = st.selectbox('Variable Qualitative', ('Logement Actuel', 'Statut Familial', 'Niveau d\'éducation', 'Sexe',
+        select_variable1 = st.selectbox('Variable Qualitative', ('Logement Actuel', 'Statut Familial', 'Niveau d\'éducation', 'Sexe',
                                     'Situation Prof.','Type emprunt sollicité'))
         
         #valeur de la variable sélectionnée pour le client concerné
-        spec_quali =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
+        spec_quali =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable1].values[0]
         
         # affichage simple : 
         if select_display1 == 'Affichage basique':
-            #liste des valeurs uniques de la variable sélectionnée (select_variable)
+            #liste des valeurs uniques de la variable sélectionnée (select_variable1)
             fig = plt.figure(figsize=(8, 4))
-            var_list = list(df_base[select_variable].unique())
-            ax = sns.histplot(df_base[select_variable])
+            var_list = list(df_base[select_variable1].unique())
+            ax = sns.histplot(df_base[select_variable1])
             #couleur spécifique pour la bin dans laquelle le client se trouve
             for i in range(len(ax.patches)):
                 p= ax.patches[i] #PATCH , rectangle n°i
@@ -118,7 +118,7 @@ if check_compare:
         if select_display1 == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
             st.write('Valeur client : ' + str(spec_quali))
             fig = plt.figure(figsize=(8, 4))
-            ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")
+            ax = sns.histplot(data=df_base, x=df_base[select_variable1], hue='TARGET', multiple="stack")
             plt.xticks(rotation=45)
             st.pyplot(fig)
 
@@ -126,13 +126,13 @@ if check_compare:
     check_compare_quanti = st.checkbox("Comparatives Quantitatives")
     if check_compare_quanti:
         select_display2 = st.selectbox( 'Mode Affichage', ('Affichage basique', 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)'))
-        select_variable = st.selectbox('Variable Quantitative', ('Age (ans)', 'Nombre Enfant','Ancienneté Prof. (ans)','Montant Emprunt ($)',
+        select_variable2 = st.selectbox('Variable Quantitative', ('Age (ans)', 'Nombre Enfant','Ancienneté Prof. (ans)','Montant Emprunt ($)',
                                     'Montant Annuité ($)', 'Salaire Annuel ($)', 'Montant du bien financé ($)', 'Taux endettement (%)'))
-        spec_quanti =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable].values[0]
+        spec_quanti =df_base.loc[df_base['SK_ID_CURR']==select_id][select_variable2].values[0]
 
         # affichage simple :
         if select_display2 == 'Affichage basique':
-            var_list = list(df_base[select_variable].unique())
+            var_list = list(df_base[select_variable2].unique())
             var_list.sort()
             if len(var_list) > 5:
                 var_list = np.linspace(min(var_list), max(var_list), num=25)
@@ -140,15 +140,15 @@ if check_compare:
                 var_list = var_list  
             fig = plt.figure(figsize=(8, 4))
             patch_index = np.digitize([spec_quanti], var_list)[0]-1
-            ax = sns.histplot(df_base[select_variable] ,bins=var_list)
-            plt.axvline(x=df_base[select_variable].median(),color='#a95f6f',ls='--')
+            ax = sns.histplot(df_base[select_variable2] ,bins=var_list)
+            plt.axvline(x=df_base[select_variable2].median(),color='#a95f6f',ls='--')
             ax.patches[patch_index].set_color('#50a28c')
             #légende
             legend1 = patches.Patch(color='#50a28c', label='Client\'s bracket')
             legend2 = Line2D([0], [0], color='#a95f6f', label='Median',ls='--')
-            if select_variable in ['Age (ans)','Nombre Enfant','Ancienneté Prof. (ans)']:
+            if select_variable2 in ['Age (ans)','Nombre Enfant','Ancienneté Prof. (ans)']:
                 titre = 'Valeur client = '+str(spec_quanti)
-            elif select_variable == 'Taux endettement (%)':
+            elif select_variable2 == 'Taux endettement (%)':
                 titre = 'Valeur client = '+str(spec_quanti) +' %'
             else : 
                 titre = 'Valeur client = $'+str(spec_quanti) 
@@ -159,7 +159,7 @@ if check_compare:
         if select_display2 == 'Affichage avec répartition Prêt Accepté (0) ou Refusé (1)':
             st.write('Valeur client : ' + str(spec_quanti))
             fig = plt.figure(figsize=(8, 4))
-            ax = sns.histplot(data=df_base, x=df_base[select_variable], hue='TARGET', multiple="stack")
+            ax = sns.histplot(data=df_base, x=df_base[select_variable2], hue='TARGET', multiple="stack")
             plt.xticks(rotation=45)
             st.pyplot(fig)
 
@@ -179,7 +179,8 @@ def get_score_from_pickle():
     return score
 
 def get_score_from_api():
-    url = 'http://127.0.0.1:5000/prediction'
+    # url = 'http://127.0.0.1:5000/prediction'
+    url = 'http://54.83.187.109:5000/prediction'
     r = requests.post(url,json={'SK_ID_CURR': select_id})
     score = float(r.json())
     return score
