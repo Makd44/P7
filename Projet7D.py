@@ -29,7 +29,7 @@ rows = 250
 df_base= pd.read_csv('application_train_sorted.csv', sep=',', nrows =rows)
 
 #Création du volet d'affichage à gauche
-st.sidebar.image("/Users/Florent/Documents/Data_Formation/Projet_7/logo.png", use_column_width=True)
+st.sidebar.image("logo.png", use_column_width=True)
 
 select_id = st.sidebar.selectbox( "Select Loan Application ID", df_base.SK_ID_CURR.tolist())  # sélection du client
 st.sidebar.write('Afficher informations client :')
@@ -172,7 +172,7 @@ df_final = pd.read_csv('df_final.csv', sep=',', nrows=rows)
 df_1 = df_final.drop('TARGET', axis=1)
 
 def get_score_from_pickle():
-    model = pickle.load(open('/Users/Florent/Documents/Data_Formation/Projet_7/model.pkl', 'rb'))
+    model = pickle.load(open('model.pkl', 'rb'))
     prediction = model.predict_proba(df_1[df_1['SK_ID_CURR']== select_id])
     P = np.array(prediction).flatten()
     score = P[1]
@@ -232,7 +232,7 @@ if check_FI:
 
         tab1, tab2 = st.tabs(["Chart", "Data"])
         with tab1:
-            st.image("/Users/Florent/Documents/Data_Formation/Projet_7/grafic.png", use_column_width=True)
+            st.image("grafic.png", use_column_width=True)
         with tab2:
             st.table(df_légende)
 
@@ -248,7 +248,7 @@ if check_FI:
     check_FI_Local = st.checkbox("Importance des variables locales")
     if check_FI_Local:
         
-        model = pickle.load(open('/Users/Florent/Documents/Data_Formation/Projet_7/model.pkl', 'rb'))
+        model = pickle.load(open('model.pkl', 'rb'))
         st.write('Importance des features pour ce client:')  
         shap.initjs()
         X = df_final.loc[:, df_final.columns != 'TARGET']
