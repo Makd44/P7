@@ -29,7 +29,7 @@ rows = 250
 df_base= pd.read_csv('application_train_sorted.csv', sep=',', nrows =rows)
 
 #Création du volet d'affichage à gauche
-st.sidebar.image("logo.png", use_column_width=True)
+st.sidebar.image("Logo.png", use_column_width=True)
 
 select_id = st.sidebar.selectbox( "Select Loan Application ID", df_base.SK_ID_CURR.tolist())  # sélection du client
 st.sidebar.write('Afficher informations client :')
