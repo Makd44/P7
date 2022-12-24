@@ -179,8 +179,7 @@ def get_score_from_pickle():
     return score
 
 def get_score_from_api():
-    # url = 'http://127.0.0.1:5000/prediction'
-    url = 'http://54.83.187.109:5000/prediction'
+    url = 'http://127.0.0.1:5000/prediction'
     r = requests.post(url,json={'SK_ID_CURR': select_id})
     score = float(r.json())
     return score
