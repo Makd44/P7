@@ -55,7 +55,7 @@ df_base['Age (ans)'] = abs((df_base['Age (ans)']/365).astype(np.int64, errors='i
 df_base['Sexe'] = df_base['Sexe'].replace(['M', 'F'],['Male', 'Female'])
 df_base['Taux endettement (%)']=(df_base['Montant Annuité ($)']/df_base['Salaire Annuel ($)']*100).round(1)
 
-scd_info_cli= '<p style="background-color:#50a28c;font-size:24px;border-radius:2%;">--- Informations situation personnelle & financière ---</p>'
+scd_info_cli= '<p style="background-color:#50a28c;font-size:24px;border-radius:2%;">--- Situation personnelle & financière ---</p>'
 st.markdown(scd_info_cli, unsafe_allow_html=True)
 #CREATION TABLEAU SITUATION PERSONNELLE
 df_client = df_base[['SK_ID_CURR', 'Age (ans)','Sexe', 'Nombre Enfant','Niveau d\'éducation', 'Logement Actuel',
@@ -164,8 +164,8 @@ if check_compare:
             st.pyplot(fig)
 
 # SCORE
-check_score = st.sidebar.checkbox("Score Client")
-scd_info_score= '<p style="background-color:#50a28c;font-size:24px;border-radius:2%;">--- Score Client ---</p>'
+check_score = st.sidebar.checkbox("Score client")
+scd_info_score= '<p style="background-color:#50a28c;font-size:24px;border-radius:2%;">--- Score client ---</p>'
 st.markdown(scd_info_score, unsafe_allow_html=True)
  # df_final a déjà été trié par ordre croissant de SK_ID_CURR avant enregistrement
 df_final = pd.read_csv('df_final.csv', sep=',', nrows=rows)  
@@ -208,7 +208,7 @@ if check_score:
 
 # POIDS DES FEATURES
 check_FI = st.sidebar.checkbox("Importance des variables")
-scd_info_comp= '<p style="background-color:#43818c;font-size:24px;border-radius:2%;">--- Affichage Importance des Variables ---</p>'
+scd_info_comp= '<p style="background-color:#43818c;font-size:24px;border-radius:2%;">--- Importance des variables ---</p>'
 st.markdown(scd_info_comp, unsafe_allow_html=True)
 if check_FI:
     
