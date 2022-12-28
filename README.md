@@ -1,15 +1,15 @@
 # Projet 7
 
-The project needs to be run in the root directory:
+Le projet doit être lancé dans le dossier racine:
 - AWS: ~/Projet7
-- Locally: Documents\Data_Formation\Projet_7
+- Local: Documents\Data_Formation\Projet_7
 
-To run the api under AWS:
+Pour lancer d'API sous AWS:
 ```bash
 python3 API.py
 ```
 
-To start the streamlit server under AWS:
+Pour lancer le serveur streamlit sous AWS:
 ```bash
 streamlit run Projet7D.py
 ```
